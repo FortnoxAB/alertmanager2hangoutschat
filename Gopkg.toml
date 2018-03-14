@@ -42,13 +42,13 @@
   name = "github.com/jonaz/gograce"
 
 [[constraint]]
-  branch = "master"
-  name = "github.com/koding/multiconfig"
-
-[[constraint]]
   name = "github.com/sirupsen/logrus"
   branch = "master"
 
 [prune]
   go-tests = true
   unused-packages = true
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/prometheus/alertmanager"

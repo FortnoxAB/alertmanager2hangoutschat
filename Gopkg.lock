@@ -2,28 +2,10 @@
 
 
 [[projects]]
-  name = "github.com/BurntSushi/toml"
-  packages = ["."]
-  revision = "b26d9c308763d68093482582cea63d69be07a0f0"
-  version = "v0.3.0"
-
-[[projects]]
   branch = "master"
   name = "github.com/beorn7/perks"
   packages = ["quantile"]
   revision = "4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/fatih/camelcase"
-  packages = ["."]
-  revision = "44e46d280b43ec1531bb25252440e34f1b800b65"
-
-[[projects]]
-  name = "github.com/fatih/structs"
-  packages = ["."]
-  revision = "a720dfa8df582c51dee1b36feabb906bde1588bd"
-  version = "v1.0"
 
 [[projects]]
   branch = "master"
@@ -73,12 +55,6 @@
   version = "1.1.2"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/koding/multiconfig"
-  packages = ["."]
-  revision = "69c27309b2d751c576b59ea9c3726597c2375da3"
-
-[[projects]]
   name = "github.com/mattn/go-isatty"
   packages = ["."]
   revision = "0360b2af4f38e8d38c7fce2a9f4e702702d73a39"
@@ -101,6 +77,16 @@
   packages = ["."]
   revision = "1df9eeb2bb81f327b96228865c5687bc2194af3f"
   version = "1.0.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/prometheus/alertmanager"
+  packages = [
+    "template",
+    "template/internal/deftmpl",
+    "types"
+  ]
+  revision = "d63c25a8559f0ea208e2aff78b32923b0b56975f"
 
 [[projects]]
   name = "github.com/prometheus/client_golang"
@@ -163,7 +149,7 @@
     "unix",
     "windows"
   ]
-  revision = "8c0ece68c28377f4c326d85b94f8df0dace46f80"
+  revision = "932fb2287bee613f2a65e71685c9d9c0020da979"
 
 [[projects]]
   name = "gopkg.in/go-playground/validator.v8"
@@ -180,6 +166,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "707bf6b6868b0b8435262d0a12063142de392e185ac9cf1c882b4d76d68a21f6"
+  inputs-digest = "bf5cadcd7261da38c47b1ebae3aacc37ffe62bc3ec23ed1046930676faf217a4"
   solver-name = "gps-cdcl"
   solver-version = 1
