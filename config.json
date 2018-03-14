@@ -1,0 +1,16 @@
+{
+	"serviceName": "alertmanager2hangoutschat",
+	"apiEndpoints": [
+		"/api/alertmanager2hangoutschat"
+	],
+	"language": "go",
+	"types": [
+		"backend"
+	],
+	"environments": {
+		"default": {
+			"replicas": "1"
+		}
+	},
+	"team": "sudo"
+}

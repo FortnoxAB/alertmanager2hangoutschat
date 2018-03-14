@@ -1,0 +1,50 @@
+---
+apiVersion: extensions/v1beta1 # for versions before 1.8.0 use apps/v1beta1
+kind: Deployment
+metadata:
+  name: alertmanager2hangoutschat
+  labels:
+    app: alertmanager2hangoutschat
+    version: "{{.Version}}"
+    team: "{{.Team}}"
+spec:
+  replicas: {{ .Config "replicas" }}
+  selector:
+    matchLabels:
+      app: alertmanager2hangoutschat
+  template:
+    metadata:
+      labels:
+        app: alertmanager2hangoutschat
+        version: "{{.Version}}"
+        team: "{{.Team}}"
+    spec:
+      imagePullSecrets:
+      - name: fortnox-kube-pull-secret
+      containers:
+      - name: alertmanager2hangoutschat
+        image: "quay.io/fortnox/{{.ServiceName}}:{{.Version}}"
+        imagePullPolicy: Always
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 3
+          timeoutSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 3
+          timeoutSeconds: 5
+        resources:
+          limits:
+            cpu: 200m
+            memory: 100Mi
+          requests:
+            cpu: 200m
+            memory: 100Mi
+        ports:
+        - containerPort: 8080

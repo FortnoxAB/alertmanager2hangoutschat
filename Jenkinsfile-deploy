@@ -1,0 +1,14 @@
+node('deploy-kubernetes'){
+	stage( 'Checkout'){
+		checkout scm
+	}
+	def gitTag = "${GIT_TAG}"
+	def credId = "${CLUSTER_CREDENTIALS}"
+	def cluster = "${CLUSTER}"
+	tag = gitTag.replaceFirst('v', '')
+	stage('deploy') {
+		wrap([$class: 'KubectlBuildWrapper', serverUrl: cluster, credentialsId: credId ]) {
+			sh 'fnxctl deploy '+tag
+		}
+	}
+}

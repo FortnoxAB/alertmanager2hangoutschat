@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alertmanager2hangoutschat
+  labels:
+    app: alertmanager2hangoutschat
+    collect-metrics: "true"
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    name: metrics
+  selector:
+    app: alertmanager2hangoutschat
+
