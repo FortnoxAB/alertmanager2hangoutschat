@@ -38,7 +38,7 @@ var messageTemplate = `{{ define "print_annotations" }}{{ range . }}
 Source: <{{ .GeneratorURL }}|Show in prometheus>
 {{ end -}}{{ end -}}
 <users/all>
-*[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]*
+*{{.QueryParams.Get "env" | toUpper }} - {{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}*
 {{ if gt (len .Alerts.Firing) 0 -}}
 {{ template "print_annotations" .Alerts.Firing -}}
 {{ end -}}
@@ -107,6 +107,11 @@ var defaultFuncs = template.FuncMap{
 	},
 }
 
+type alertData struct {
+	alerttemplate.Data
+	QueryParams url.Values
+}
+
 type textRequest struct {
 	Text string `json:"text"`
 }
@@ -125,8 +130,9 @@ func handleAlert(c *gin.Context) {
 
 	logrus.Info("URL:", hangoutsURL)
 
-	data := alerttemplate.Data{}
+	data := alertData{}
 	err = dec.Decode(&data)
+	data.QueryParams = c.Request.URL.Query()
 	if err != nil {
 		logrus.Error(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
