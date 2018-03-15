@@ -38,7 +38,7 @@ var messageTemplate = `{{ define "print_annotations" }}{{ range . }}
 Source: <{{ .GeneratorURL }}|Show in prometheus>
 {{ end -}}{{ end -}}
 <users/all>
-[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]
+*[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]*
 {{ if gt (len .Alerts.Firing) 0 -}}
 {{ template "print_annotations" .Alerts.Firing -}}
 {{ end -}}
