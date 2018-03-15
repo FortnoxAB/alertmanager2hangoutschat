@@ -26,7 +26,7 @@ import (
 
 var port = flag.String("port", "8080", "Port to listen to")
 var postPath = flag.String("path", "/api/alertmanager2hangoutschat/alertmanager", "What path to listen to for POST requests")
-var logFormat = flag.String("log-format", "", "can be empty string or json")
+var logFormat = flag.String("log-format", "json", "can be empty string or json")
 var logLevel = flag.String("log-level", "info", "Can be one of:"+strings.Join(validLogLevels(), ","))
 var templateString = flag.String("template-string", messageTemplate, "template for the messages sent to hangouts chat")
 
@@ -127,8 +127,6 @@ func handleAlert(c *gin.Context) {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-
-	logrus.Info("URL:", hangoutsURL)
 
 	data := alertData{}
 	err = dec.Decode(&data)
