@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: alertmanager2hangoutschat
+  namespace: monitoring
   labels:
     app: alertmanager2hangoutschat
     collect-metrics: "true"

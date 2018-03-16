@@ -9,7 +9,7 @@
 	],
 	"environments": {
 		"default": {
-			"replicas": "1"
+			"replicas": "2"
 		}
 	},
 	"team": "sudo"

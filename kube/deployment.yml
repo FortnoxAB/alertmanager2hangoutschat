@@ -3,6 +3,7 @@ apiVersion: extensions/v1beta1 # for versions before 1.8.0 use apps/v1beta1
 kind: Deployment
 metadata:
   name: alertmanager2hangoutschat
+  namespace: monitoring
   labels:
     app: alertmanager2hangoutschat
     version: "{{.Version}}"
