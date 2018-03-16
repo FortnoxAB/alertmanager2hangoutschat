@@ -25,7 +25,7 @@ import (
 )
 
 var port = flag.String("port", "8080", "Port to listen to")
-var postPath = flag.String("path", "/api/alertmanager2hangoutschat/alertmanager", "What path to listen to for POST requests")
+var postPath = flag.String("path", "/alertmanager", "What path to listen to for POST requests")
 var logFormat = flag.String("log-format", "json", "can be empty string or json")
 var logLevel = flag.String("log-level", "info", "Can be one of:"+strings.Join(validLogLevels(), ","))
 var templateString = flag.String("template-string", messageTemplate, "template for the messages sent to hangouts chat")
