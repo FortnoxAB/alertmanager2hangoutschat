@@ -30,21 +30,12 @@ var logFormat = flag.String("log-format", "json", "can be empty string or json")
 var logLevel = flag.String("log-level", "info", "Can be one of:"+strings.Join(validLogLevels(), ","))
 var templateString = flag.String("template-string", messageTemplate, "template for the messages sent to hangouts chat")
 
-var messageTemplate = `{{ define "print_annotations" }}{{ range . }}
-*{{ .Labels.alertname }}*
+var messageTemplate = `<users/all>
+*{{.QueryParams.Get "env" | toUpper }}: {{ .Labels.alertname }} - {{.Status | toUpper}}*
 {{ range .Annotations.SortedPairs -}}
 {{ .Name }}: {{ .Value}}
 {{ end -}}
 Source: <{{ .GeneratorURL }}|Show in prometheus>
-{{ end -}}{{ end -}}
-<users/all>
-*{{.QueryParams.Get "env" | toUpper }} - {{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}*
-{{ if gt (len .Alerts.Firing) 0 -}}
-{{ template "print_annotations" .Alerts.Firing -}}
-{{ end -}}
-{{ if gt (len .Alerts.Resolved) 0 -}}
-{{ template "print_annotations" .Alerts.Resolved -}}
-{{ end -}}
 `
 
 func main() {
@@ -108,7 +99,7 @@ var defaultFuncs = template.FuncMap{
 }
 
 type alertData struct {
-	alerttemplate.Data
+	alerttemplate.Alert
 	QueryParams url.Values
 }
 
@@ -121,27 +112,45 @@ func handleAlert(c *gin.Context) {
 	defer c.Request.Body.Close()
 	dec := json.NewDecoder(c.Request.Body)
 
-	hangoutsURL, err := url.Parse(c.Request.URL.Query().Get("url"))
+	data := alerttemplate.Data{}
+	err := dec.Decode(&data)
 	if err != nil {
 		logrus.Error(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
-	data := alertData{}
-	err = dec.Decode(&data)
-	data.QueryParams = c.Request.URL.Query()
-	if err != nil {
-		logrus.Error(err)
+	for _, alert := range data.Alerts {
+		err := sendAlert(alert, c.Request.URL.Query())
+		if err != nil {
+			c.Error(err)
+			continue
+		}
+
+	}
+	if len(c.Errors.Errors()) > 0 {
+		for _, v := range c.Errors {
+			logrus.Error(v)
+		}
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
+	c.Status(http.StatusOK)
+}
 
-	tmpl, err := generateTemplate(messageTemplate, data)
+func sendAlert(data alerttemplate.Alert, getParams url.Values) error {
+	hangoutsURL, err := url.Parse(getParams.Get("url"))
 	if err != nil {
-		logrus.Error(err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
+		return err
+	}
+
+	alert := &alertData{
+		Alert:       data,
+		QueryParams: getParams,
+	}
+	tmpl, err := generateTemplate(messageTemplate, alert)
+	if err != nil {
+		return err
 	}
 
 	textReq := &textRequest{
@@ -151,21 +160,10 @@ func handleAlert(c *gin.Context) {
 	buf := &bytes.Buffer{}
 	enc := json.NewEncoder(buf)
 	err = enc.Encode(&textReq)
-
 	if err != nil {
-		logrus.Error(err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
+		return err
 	}
-
-	err = sendChatMessage(hangoutsURL, buf)
-	if err != nil {
-		logrus.Error(err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-
-	c.Status(http.StatusOK)
+	return sendChatMessage(hangoutsURL, buf)
 }
 
 func sendChatMessage(u *url.URL, data io.Reader) error {
