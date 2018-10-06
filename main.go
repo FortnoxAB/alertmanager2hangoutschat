@@ -148,7 +148,7 @@ func sendAlert(data alerttemplate.Alert, getParams url.Values) error {
 		Alert:       data,
 		QueryParams: getParams,
 	}
-	tmpl, err := generateTemplate(messageTemplate, alert)
+	tmpl, err := generateTemplate(*templateString, alert)
 	if err != nil {
 		return err
 	}
@@ -191,7 +191,7 @@ func sendChatMessage(u *url.URL, data io.Reader) error {
 }
 
 func generateTemplate(s string, data interface{}) (string, error) {
-	tmpl, err := template.New("").Funcs(defaultFuncs).Parse(messageTemplate)
+	tmpl, err := template.New("").Funcs(defaultFuncs).Parse(s)
 	if err != nil {
 		return "", err
 	}
