@@ -83,7 +83,9 @@ func getWebRouter() http.Handler {
 }
 
 // defaultFuncs is copied from alertmanager templates
+// adding "now" to allow for injection of time into alert
 var defaultFuncs = template.FuncMap{
+	"now":     time.Now,
 	"toUpper": strings.ToUpper,
 	"toLower": strings.ToLower,
 	"title":   strings.Title,
