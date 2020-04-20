@@ -83,12 +83,24 @@ func getWebRouter() http.Handler {
 }
 
 // defaultFuncs is copied from alertmanager templates
-// adding "now" to allow for injection of time into alert
+// Additionally added now, hour and minute for time templating
 var defaultFuncs = template.FuncMap{
-	"now":     time.Now,
 	"toUpper": strings.ToUpper,
 	"toLower": strings.ToLower,
 	"title":   strings.Title,
+	"now":     time.Now,
+	// Usage example for grafana timestamps representing 1hr ago:
+	// {{ (now.Add (hour -1)).Unix }}000
+	"hour": func(h int32) time.Duration {
+		timeString := fmt.Sprintf("%dh",h)
+		duration,_ := time.ParseDuration(timeString)
+		return duration
+	},
+	"minute": func(m int32) time.Duration {
+		timeString := fmt.Sprintf("%dm",m)
+		duration,_ := time.ParseDuration(timeString)
+		return duration
+	},
 	// join is equal to strings.Join but inverts the argument order
 	// for easier pipelining in templates.
 	"join": func(sep string, s []string) string {
